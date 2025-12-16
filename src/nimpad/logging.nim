@@ -49,4 +49,5 @@ proc error*(str: string): void =
 
 proc fatal*(str: string): void =
   consoleLog.log(lvlFatal, str)
+  quit(1)
 

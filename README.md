@@ -23,7 +23,10 @@ https://www.printables.com/model/1400774-macropad
   - Arguments can be found by tacking `-h` or `--help`
 
 > [!IMPORTANT]
-> Nimpad ONLY supports macropads with 10 or less keys.
+> Nimpad ONLY supports pads with 10 or less keys.
+
+> [!IMPORTANT]
+> If your pad ever disconnects, it's device name may change. To prevent errors that happen with this, run with the port option set to your device in `/dev/serial/by-id/`. Ex: `nimpad -p=/dev/serial/by-id/usb-Arduino_LLC_Arduino_Micro_HIDLD-if00`
 
 If you are using Nimpad for the first time, it will create a default config file and quit. Please configure this config file before running it again as it does send keyboard inputs and run commands. Details [below](https://github.com/PassiveLemon/nimpad?tab=readme-ov-file#configuration-configjson).
 
@@ -55,5 +58,6 @@ By default, it will create the config file like so:
 - 8: Unused
 - 9: Unused
 
-# Standlone
-If you don't want to use the Nimpad host client, you can find a completely standlone Arduino sketch in `other`
+# Standalone
+If you don't want to use the Nimpad host client, you can find a completely standalone Arduino sketch in `other`. This still sends keyboard inputs, but does not allow running commands on the host.
+

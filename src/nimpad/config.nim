@@ -17,7 +17,7 @@ type
     port*: string
   GlobalConfig* = object
     config*: Config
-    macropad*: MacropadKeySeq
+    nimpad*: NimpadKeySeq
 
 
 const
@@ -53,7 +53,6 @@ proc createConfig(filePath: string): void =
       createDir(parentPath)
     except IOError, OSError:
       fatal(fmt"Could not create {parentPath}")
-      quit(1)
 
   if not fileExists(filePath):
     try:
@@ -62,21 +61,19 @@ proc createConfig(filePath: string): void =
       fatal(fmt"Could not write to {filePath}")
     finally:
       fatal(fmt"Config file was created at {filePath}. Please configure it accordingly before running again.")
-      discard readLine(stdin)
-      quit(0)
 
 proc parseConfig(filePath: string, cliArgs: CliArgs): Config =
   try:
-    let macropad = parseFile(filePath)
+    let nimpadConfig = parseFile(filePath)
     var
       node: JsonNode = %*{}
       json: Config
 
-    for v in macropad.items:
+    for v in nimpadConfig.items:
       let
-        actionType = parseEnum[MacropadKeyActionType](v[0].getStr())
+        actionType = parseEnum[NimpadKeyActionType](v[0].getStr())
         action = v[1].getStr()
-      globalConfig.macropad.add((actionType, action))
+      globalConfig.nimpad.add((actionType, action))
 
     if cliArgs.port == "":
       debug("Argument MODE not provided. Defaulting to /dev/ttyACM0...")
@@ -88,7 +85,6 @@ proc parseConfig(filePath: string, cliArgs: CliArgs): Config =
     return json
   except JsonParsingError:
     fatal("Config file is not valid json.")
-    quit(1)
 
 proc initConfig*(): void =
   let cliArgs = processCliArgs()
@@ -101,3 +97,4 @@ proc initConfig*(): void =
 
   createConfig(configDir)
   globalConfig.config = parseConfig(configDir, cliArgs)
+

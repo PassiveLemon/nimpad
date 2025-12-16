@@ -2,19 +2,21 @@ import tables
 
 import libevdev
 
+
 type
   EvdevKey* = int
-  MacropadKeyActionType* = enum
+  NimpadKeyActionType* = enum
     KEY_ACTION, SHELL_ACTION
-  MacropadKeyAction* = string
+  NimpadKeyAction* = string
 
-  MacropadKey* = tuple[actionType: MacropadKeyActionType, action: MacropadKeyAction]
-  MacropadKeySeq* = seq[MacropadKey]
+  NimpadKey* = tuple[actionType: NimpadKeyActionType, action: NimpadKeyAction]
+  NimpadKeySeq* = seq[NimpadKey]
+
 
 const
-  RELEASE_VERSION*: string = "0.2.0"
+  RELEASE_VERSION*: string = "0.3.0"
 
-  EVDEV_LOOKUP*: Table[MacropadKeyAction, EvdevKey] = {
+  EVDEV_LOOKUP*: Table[NimpadKeyAction, EvdevKey] = {
     "VOLUMEUP": KEY_VOLUMEUP,
     "VOLUMEDOWN": KEY_VOLUMEDOWN,
     "VOLUMEMUTE": KEY_MUTE,
@@ -23,3 +25,4 @@ const
     "PREVIOUSSONG": KEY_PREVIOUSSONG,
     "PLAYPAUSE": KEY_PLAYPAUSE
   }.toTable
+

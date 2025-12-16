@@ -26,18 +26,21 @@
             arduino-cli
           ];
           shellHook = ''
+            echo "Updating Nim lock..."
             nim_lk | jq --sort-keys > lock.json
+            echo "Installing nimble packages..."
             nimble install -d > /dev/null
             alias arduino-cli="arduino-cli --config-file ./arduino-cli.yaml"
             alias editor="lite-xl $PWD &"
             alias mk="make"
             alias nr="nix run"
+            alias nimpad='nr .#default --'
           '';
         };
       };
       packages = {
         default = self'.packages.nimpad;
-        nimpad = pkgs.callPackage ./default.nix { };
+        nimpad = pkgs.callPackage ./package.nix { };
       };
     };
   };
