@@ -67,7 +67,7 @@ void loop() {
     delay(500);
   }
 
-  if (connected and ((millis() - validate) >= 5000)) {
+  if (connected and ((millis() - validate) >= 30000)) {
     validate = millis();
     // Validate connection after some time
     handshake("AV");

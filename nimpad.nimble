@@ -1,6 +1,6 @@
 # Package
 packageName = "nimpad"
-version = "0.3.0"
+version = "0.3.1"
 author = "PassiveLemon"
 description = "A Nim based client for a DIY macropad"
 license = "GPL-3.0-only"
