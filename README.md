@@ -26,12 +26,12 @@ https://www.printables.com/model/1400774-macropad
 > Nimpad ONLY supports pads with 10 or less keys.
 
 > [!IMPORTANT]
-> If your pad ever disconnects, it's device name may change. To prevent errors that happen with this, run with the port option set to your device in `/dev/serial/by-id/`. Ex: `nimpad -p=/dev/serial/by-id/usb-Arduino_LLC_Arduino_Micro_HIDLD-if00`
+> If your pad ever disconnects, the device name may change. To prevent errors that happen with this, run with the port option set to your device in `/dev/serial/by-id/`. Ex: `nimpad -p=/dev/serial/by-id/usb-Arduino_LLC_Arduino_Micro_HIDLD-if00`
 
 If you are using Nimpad for the first time, it will create a default config file and quit. Please configure this config file before running it again as it does send keyboard inputs and run commands. Details [below](https://github.com/PassiveLemon/nimpad?tab=readme-ov-file#configuration-configjson).
 
 # Configuration (config.json)
-The intended way to currently configure Nimpad is by the config.json.
+The currently intended way to configure Nimpad is by the config.json.
 By default, it will create the config file like so:
 ```json
 [

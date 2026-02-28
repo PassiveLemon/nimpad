@@ -38,45 +38,10 @@ void keyWrapper(char button, KeyState state) {
   Serial.flush();
 }
 
-int connected = false;
-
-void handshake(String conn) {
-  char buf[3] = {0};
-  Serial.readBytes(buf, 2);
-
-  // Receive acknowledgement, establish connection
-  if (strcmp(buf, "AA") == 0) {
-    Serial.print("AE");
-    Serial.flush();
-    return;
-  }
-  // Finish connection handshake
-  if (strcmp(buf, "AF") == 0) {
-    connected = true;
-    return;
-  }
-  Serial.print(conn);
-  Serial.flush();
-}
-
-float validate = millis();
 void loop() {
-  while (not connected) {
-    // Request connection
-    handshake("AR");
-    delay(500);
-  }
-
-  if (connected and ((millis() - validate) >= 5000)) {
-    validate = millis();
-    // Validate connection after some time
-    handshake("AV");
-  }
-
   if (kpd.getKeys()) {
     for (int i = 0; i < LIST_MAX; i++) {
       if (kpd.key[i].stateChanged) {
-        validate = millis();
         keyWrapper(kpd.key[i].kchar, kpd.key[i].kstate);
       }
     }

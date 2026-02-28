@@ -15,3 +15,4 @@ compile:
 
 upload: compile
 	arduino-cli upload $(SKETCH) $(CONFIG) $(FQBN) $(PORT)
+

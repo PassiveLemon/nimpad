@@ -49,7 +49,7 @@ proc cleanupDevice*(): void =
 proc openDevice*(globalConfig: GlobalConfig): SerialStream =
   while true:
     try:
-      nimpadStream = newSerialStream(globalConfig.config.port, 9600, Parity.None, 8, StopBits.One, Handshake.None, readTimeout = 20000, writeTimeout = 20000)
+      nimpadStream = newSerialStream(globalConfig.config.port, 9600, Parity.None, 8, StopBits.One, Handshake.None, readTimeout = TIMEOUT_INFINITE, writeTimeout = TIMEOUT_INFINITE)
       return nimpadStream
     except InvalidSerialPortError:
       error(fmt"Port {globalConfig.config.port} is not a valid serial port. Retrying...")
@@ -102,34 +102,11 @@ proc actionHandler*(input: string, nimpadKeys: NimpadKeySeq): void =
   except:
     warn(fmt"Unknown actionHandler input '{input}'. Ignoring...")
 
-proc nimpadHandshake*(input: string): void =
-  let
-    aa: string = "AA"
-    af: string = "AF"
-
-  case input:
-    of "AR": # Acknowledge connection
-      debug("Received AR, acknowledging connection, sending AA")
-      nimpadStream.writeData(aa.cstring, aa.len)
-      nimpadStream.flush()
-    of "AE": # Finish connection
-      debug("Received AE, completing connection, sending AF")
-      nimpadStream.writeData(af.cstring, af.len)
-      nimpadStream.flush()
-    of "AV": # Validate connection
-      debug("Received AV, validating connection, sending AF")
-      nimpadStream.writeData(af.cstring, af.len)
-      nimpadStream.flush()
-
 proc keyHandler*(input: string, nimpadKeys: NimpadKeySeq): void =
   debug(fmt"Received input: '{input}'")
   try:
-    case input:
-      of "AR", "AA", "AE", "AF", "AV":
-        nimpadHandshake(input)
-      else:
-        discard parseInt(input)
-        actionHandler(input, nimpadKeys)
+    discard parseInt(input)
+    actionHandler(input, nimpadKeys)
   except:
     warn(fmt"Unknown KeyHandler input '{input}'. Ignoring...")
 
