@@ -49,7 +49,7 @@ proc cleanupDevice*(): void =
 proc openDevice*(globalConfig: GlobalConfig): SerialStream =
   while true:
     try:
-      nimpadStream = newSerialStream(globalConfig.config.port, 9600, Parity.None, 8, StopBits.One, Handshake.None, readTimeout = TIMEOUT_INFINITE, writeTimeout = TIMEOUT_INFINITE)
+      nimpadStream = newSerialStream(globalConfig.config.port, 9600, Parity.None, 8, StopBits.One, Handshake.None, readTimeout = 300000, writeTimeout = 300000)
       return nimpadStream
     except InvalidSerialPortError:
       error(fmt"Port {globalConfig.config.port} is not a valid serial port. Retrying...")

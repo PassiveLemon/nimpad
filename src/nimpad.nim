@@ -37,9 +37,10 @@ block nimpad:
         if n == 0:
           # Not technically an error condition, but we normally shouldnt ever see n == 0 due to the validation handshake
           break
-      except IOError, OSError:
+      except OSError, IOError:
+        error("Port timeout or error, reconnecting...")
         break
 
-    error("Port error, Reconnecting...")
+    close(nimpadStream)
     sleep(2000)
 

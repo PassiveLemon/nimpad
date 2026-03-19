@@ -14,7 +14,7 @@ type
 
 
 const
-  RELEASE_VERSION*: string = "0.3.1"
+  RELEASE_VERSION*: string = "0.3.2"
 
   EVDEV_LOOKUP*: Table[NimpadKeyAction, EvdevKey] = {
     "VOLUMEUP": KEY_VOLUMEUP,
