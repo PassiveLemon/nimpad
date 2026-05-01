@@ -5,7 +5,7 @@ SKETCH = nimpad
 LIBRARIES = Keypad HID-Project
 
 FQBN = --fqbn arduino:avr:micro
-PORT = --port /dev/ttyACM0
+PORT = --port /dev/serial/by-id/usb-Arduino_LLC_Arduino_Micro_HIDLD-if00
 
 setup:
 	arduino-cli lib install $(LIBRARIES) $(CONFIG)
