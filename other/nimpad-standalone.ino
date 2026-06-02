@@ -1,6 +1,7 @@
 #include <Keypad.h>
 #include <HID-Project.h>
 
+
 const int R1 = 5;
 const int R2 = 6;
 const int R3 = 7;
@@ -13,25 +14,21 @@ const int ROWS = 5;
 const int COLS = 2;
 const char keys[COLS][ROWS] = {
   // For some reason this has to be flipped to work
-  { 1, 3, 5, 7, 9 },
-  { 2, 4, 6, 8, 0 }
+  { 0, 2, 4, 6, 8 },
+  { 1, 3, 5, 7, 9 }
 };
 const byte rowPins[ROWS] = { R1, R2, R3, R4, R5 };
 const byte colPins[COLS] = { C1, C2 };
 const Keypad kpd = Keypad(makeKeymap(keys), colPins, rowPins, COLS, ROWS);
 
+
 void setup() {
   Serial.begin(9600);
   Keyboard.begin();
+  while(!Serial);
 }
 
-// { 1, 2 } 1: Volume down | 2: Volume up
-// { 3, 4 } 3: Mute system | 4: Press to mute for Discord/push to talk for games
-// { 5, 6 } 5: Media previous | 6: Media next
-// { 7, 8 } 7: Media play/pause | 8: Unused
-// { 9, 0 } 9: Unused | 0: Unused
-
-void layout1(char button, KeyState state) {
+void keyWrapper(char button, KeyState state) {
   switch (button) {
     case 1:
       if (state == PRESSED) Consumer.press(MEDIA_VOLUME_DOWN);
@@ -80,7 +77,7 @@ void loop() {
   if (kpd.getKeys()) {
     for (int i = 0; i < LIST_MAX; i++) {
       if (kpd.key[i].stateChanged) {
-        layout1(kpd.key[i].kchar, kpd.key[i].kstate);
+        keyWrapper(kpd.key[i].kchar, kpd.key[i].kstate);
       }
     }
   }
