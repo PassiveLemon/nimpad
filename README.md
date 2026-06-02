@@ -23,9 +23,6 @@ https://www.printables.com/model/1400774-macropad
   - Arguments can be found by tacking `-h` or `--help`
 
 > [!IMPORTANT]
-> Nimpad ONLY supports pads with 10 or less keys.
-
-> [!IMPORTANT]
 > If your pad ever disconnects, the device name may change. To prevent errors that happen with this, run with the port option set to your device in `/dev/serial/by-id/`. Ex: `nimpad -p=/dev/serial/by-id/usb-Arduino_LLC_Arduino_Micro_HIDLD-if00`
 
 If you are using Nimpad for the first time, it will create a default config file and quit. Please configure this config file before running it again as it does send keyboard inputs and run commands. Details [below](https://github.com/PassiveLemon/nimpad?tab=readme-ov-file#configuration-configjson).
@@ -50,7 +47,7 @@ By default, it will create the config file like so:
 - 0: Volume down
 - 1: Volume up
 - 2: Mute system
-- 3: Scrolllock, used for Discord press-to-mute and game push-to-talk
+- 3: Scrolllock, used for Discord push-to-mute and game push-to-talk
 - 4: Media previous
 - 5: Media next
 - 6: Media play/pause
@@ -58,6 +55,18 @@ By default, it will create the config file like so:
 - 8: Unused
 - 9: Unused
 
+There are two action types, `KEY_ACTION` and `SHELL_ACTION`. `KEY_ACTION` is used to simulate a key input . Nimpad also allows you to run shell commands on the host system using the `SHELL_ACTION` type. This is mostly for complex scripts or any action that isn't supported as a key type in libevdev.
+
+As always, audit your commands before they run.
+
 # Standalone
-If you don't want to use the Nimpad host client, you can find a completely standalone Arduino sketch in `other`. This still sends keyboard inputs, but does not allow running commands on the host.
+If you don't want to use the Nimpad host client, you can find a completely standalone Arduino sketch in `other`. This can send keyboard inputs, but does not allow running commands on the host.
+
+# Custom pads
+If you are creating your own pad, there are a few requirements for it to work:
+- It must communicate over serial
+- It must communicate in 2 digit chunks (Ex: "71, 70") with the first digit being the numbered key (0-9) and the second the press state (0/1).
+- It must have less than 10 unique keys
+
+You also will likely need to modify the Arduino sketch for your board, pins, and keymap.
 
