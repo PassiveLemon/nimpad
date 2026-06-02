@@ -34,7 +34,7 @@
             alias editor="lite-xl $PWD &"
             alias mk="make"
             alias nr="nix run"
-            alias nimpad='nr .#default --'
+            alias nimpad='nix run .#default --'
           '';
         };
       };

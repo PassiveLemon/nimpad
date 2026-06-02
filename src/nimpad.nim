@@ -1,6 +1,5 @@
 import
   std / [
-    strformat,
     streams,
     os
   ]
@@ -20,27 +19,36 @@ block nimpad:
   initConfig()
   initDevice()
 
+  setControlCHook(inputCleanup)
+
   while true:
-    var nimpadStream: SerialStream
+    var
+      nimpadStream: SerialStream
+      buf = newString(2)
 
-    nimpadStream = openDevice(globalConfig)
+    try:
+      nimpadStream = openDevice(globalConfig)
 
-    notice(fmt"Opened serial port '{globalConfig.config.port}'.")
-
-    var buf = newString(2)
-    while true:
-      try:
-        let n = nimpadStream.readData(buf.cstring, buf.len)
-        if n > 0:
-          let chunk = buf[0..<n]
-          keyHandler(chunk, globalConfig.nimpad)
-        if n == 0:
-          # Not technically an error condition, but we normally shouldnt ever see n == 0 due to the validation handshake
+      while true:
+        try:
+          let n = nimpadStream.readData(addr buf[0], buf.len)
+          if n == 2:
+            let chunk = buf[0..<n]
+            keyHandler(chunk, globalConfig.nimpad)
+          else:
+            # We shouldn't see this because the Arduino communicates in 2 digit chunks
+            warn("n != 0, this should not happen")
+            break
+        except IOError:
+          debug("Port timeout, reconnecting...")
           break
-      except OSError, IOError:
-        error("Port timeout or error, reconnecting...")
-        break
-
-    close(nimpadStream)
+        except OSError:
+          warn("Port error, reconnecting...")
+          break
+    finally:
+      try:
+        close(nimpadStream)
+      except:
+        discard
     sleep(2000)
 
