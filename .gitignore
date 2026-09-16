@@ -1,5 +1,7 @@
 .arduino/
+.nimble/
 libraries/
 **/result
 
 *.out
+
