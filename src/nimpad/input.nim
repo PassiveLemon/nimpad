@@ -25,11 +25,11 @@ var
 
 
 proc createDevice(): ptr libevdev_uinput =
-  var
-    evdev: ptr libevdev
-    uinput: ptr libevdev_uinput
-
   try:
+    var
+      evdev: ptr libevdev
+      uinput: ptr libevdev_uinput
+
     evdev = libevdev_new()
     libevdev_set_name(evdev, "Nimpad Input");
     discard libevdev_enable_event_type(evdev, EV_KEY);
@@ -103,15 +103,15 @@ proc runShellCmd(action: string): void =
     error(fmt"Could not start process '{action}' ")
 
 proc actionHandler(input: string): void =
-  let
-    nimpadKeys = globalConfig.nimpad
-    pressedKey = $input[0]
-    pressedKeyState = parseInt($input[1])
-    keyActionType = nimpadKeys[pressedKey].keyType
-    keyAction = nimpadKeys[pressedKey].keyAction
-    keyRepeat = nimpadKeys[pressedKey].keyRepeat
-
   try:
+    let
+      nimpadKeys = globalConfig.nimpad
+      pressedKey = $input[0]
+      pressedKeyState = parseInt($input[1])
+      keyActionType = nimpadKeys[pressedKey].keyType
+      keyAction = nimpadKeys[pressedKey].keyAction
+      keyRepeat = nimpadKeys[pressedKey].keyRepeat
+
     case keyActionType:
       of KEY_ACTION:
         info(fmt"{keyAction} {pressedKeyState}")
