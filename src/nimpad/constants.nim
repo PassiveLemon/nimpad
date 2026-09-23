@@ -13,5 +13,5 @@ type
 
 
 const
-  RELEASE_VERSION*: string = "0.3.3"
+  RELEASE_VERSION*: string = "0.4.0"
 
