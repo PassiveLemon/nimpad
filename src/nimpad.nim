@@ -27,14 +27,14 @@ block nimpad:
       buf = newString(2)
 
     try:
-      nimpadStream = openDevice(globalConfig)
+      nimpadStream = openDevice()
 
       while true:
         try:
           let n = nimpadStream.readData(addr buf[0], buf.len)
           if n == 2:
             let chunk = buf[0..<n]
-            keyHandler(chunk, globalConfig.nimpad)
+            keyHandler(chunk)
           else:
             # We shouldn't see this because the Arduino communicates in 2 digit chunks
             warn("n != 0, this should not happen")

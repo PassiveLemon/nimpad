@@ -1,7 +1,3 @@
-#include <Keypad.h>
-#include <HID-Project.h>
-
-
 const int R1 = 5;
 const int R2 = 6;
 const int R3 = 7;
@@ -12,40 +8,39 @@ const int C2 = 16;
 
 const int ROWS = 5;
 const int COLS = 2;
-const char keys[COLS][ROWS] = {
-  // For some reason this has to be flipped to work
-  { 0, 2, 4, 6, 8 },
-  { 1, 3, 5, 7, 9 }
-};
+
 const byte rowPins[ROWS] = { R1, R2, R3, R4, R5 };
 const byte colPins[COLS] = { C1, C2 };
-const Keypad kpd = Keypad(makeKeymap(keys), colPins, rowPins, COLS, ROWS);
 
+bool keyState[ROWS][COLS] = { };
 
 void setup() {
   Serial.begin(9600);
-  Keyboard.begin();
+  for (int r = 0; r < ROWS; r++) {
+    pinMode(rowPins[r], OUTPUT);
+    digitalWrite(rowPins[r], HIGH);
+  }
+  for (int c = 0; c < COLS; c++) {
+    pinMode(colPins[c], INPUT_PULLUP);
+  }
   while(!Serial);
 }
 
-void keyWrapper(char button, KeyState state) {
-  char buf[2];
-  if (state == PRESSED) {
-    sprintf(buf, "%d1", button);
-  } else if (state == RELEASED) {
-    sprintf(buf, "%d0", button);
-  }
-  Serial.print(buf);
-  Serial.flush();
-}
-
 void loop() {
-  if (kpd.getKeys()) {
-    for (int i = 0; i < LIST_MAX; i++) {
-      if (kpd.key[i].stateChanged) {
-        keyWrapper(kpd.key[i].kchar, kpd.key[i].kstate);
+  for (int r = 0; r < ROWS; r++) {
+    digitalWrite(rowPins[r], LOW);
+    for (int c = 0; c < COLS; c++) {
+      bool state = digitalRead(colPins[c]) == LOW;
+      if (state != keyState[r][c]) {
+        keyState[r][c] = state;
+        int button = r * COLS + c;
+        char buf[2];
+        sprintf(buf, "%d%d", button, state);
+        Serial.print(buf);
+        Serial.flush();
       }
     }
+    digitalWrite(rowPins[r], HIGH);
   }
 }
 

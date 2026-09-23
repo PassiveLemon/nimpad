@@ -2,13 +2,13 @@
 CONFIG = --config-file ./arduino-cli.yaml
 
 SKETCH = nimpad
-LIBRARIES = Keypad HID-Project
+# LIBRARIES = 
 
 FQBN = --fqbn arduino:avr:micro
 PORT = --port /dev/serial/by-id/usb-Arduino_LLC_Arduino_Micro_HIDLD-if00
 
-setup:
-	arduino-cli lib install $(LIBRARIES) $(CONFIG)
+# setup:
+# 	arduino-cli lib install $(LIBRARIES) $(CONFIG)
 
 compile:
 	arduino-cli compile $(SKETCH) $(CONFIG) $(FQBN)

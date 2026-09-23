@@ -2,11 +2,11 @@
 
 A Nim based client for a DIY macropad.
 
-By communicating with an Arduino in the macropad, nimpad can send keyboard inputs or run shell commands.
+Nimpad listens to an Arduino macropad and runs commands or shell scripts based on key.
 
 # Dependencies
 - Linux, other platforms are not supported.
-- A user in the "input" and "dialout" group. You can use sudo privileges but if you want to use this as a daemon to run shell commands, sudo is not recommended.
+- A user in the "uinput" and "dialout" group. You can use sudo privileges but if you want to use this as a daemon to run shell commands, sudo is not recommended.
 - Nimble packages: `serial` and [`libevdev`](https://github.com/PassiveLemon/libevdev-nim)
 
 ## 3D Model
@@ -31,42 +31,58 @@ If you are using Nimpad for the first time, it will create a default config file
 The currently intended way to configure Nimpad is by the config.json.
 By default, it will create the config file like so:
 ```json
-[
-  [ "KEY_ACTION", "VOLUMEDOWN" ],
-  [ "KEY_ACTION", "VOLUMEUP" ],
-  [ "KEY_ACTION", "VOLUMEMUTE" ],
-  [ "KEY_ACTION", "SCROLLLOCK" ],
-  [ "KEY_ACTION", "PREVIOUSSONG" ],
-  [ "KEY_ACTION", "NEXTSONG" ],
-  [ "KEY_ACTION", "PLAYPAUSE" ],
-  [ "KEY_ACTION", "" ],
-  [ "KEY_ACTION", "" ],
-  [ "KEY_ACTION", "" ]
-]
+{
+  "0": { // Vol down
+    "keyType": "KEY_ACTION",
+    "keyAction": "114",
+    "keyRepeat": true,
+  },
+  "1": { // Vol up
+    "keyType": "KEY_ACTION",
+    "keyAction": "115",
+    "keyRepeat": true,
+  },
+  "2": { // Sys mute
+    "keyType": "KEY_ACTION",
+    "keyAction": "113",
+    "keyRepeat": false,
+  },
+  "3": { // Scrolllock
+    "keyType": "KEY_ACTION",
+    "keyAction": "70",
+    "keyRepeat": false,
+  },
+  "4": { // Prev song
+    "keyType": "KEY_ACTION",
+    "keyAction": "165",
+    "keyRepeat": false,
+  },
+  "5": { // Next song
+    "keyType": "KEY_ACTION",
+    "keyAction": "163",
+    "keyRepeat": false,
+  },
+  "6": { // Play/pause
+    "keyType": "KEY_ACTION",
+    "keyAction": "164",
+    "keyRepeat": false,
+  },
+}
 ```
-- 0: Volume down
-- 1: Volume up
-- 2: Mute system
-- 3: Scrolllock, used for Discord push-to-mute and game push-to-talk
-- 4: Media previous
-- 5: Media next
-- 6: Media play/pause
-- 7: Unused
-- 8: Unused
-- 9: Unused
 
-There are two action types, `KEY_ACTION` and `SHELL_ACTION`. `KEY_ACTION` is used to simulate a key input . Nimpad also allows you to run shell commands on the host system using the `SHELL_ACTION` type. This is mostly for complex scripts or any action that isn't supported as a key type in libevdev.
+There are two key types, `KEY_ACTION` and `SHELL_ACTION`:
 
-As always, audit your commands before they run.
+`KEY_ACTION` is used to simulate a key input. Find the key code to use from [libevdev](https://github.com/PassiveLemon/libevdev-nim/blob/4d9b3581df1b95ffc400ae965958039e0687f1d0/libevdev/linux/input.nim#L158).
 
-# Standalone
-If you don't want to use the Nimpad host client, you can find a completely standalone Arduino sketch in `other`. This can send keyboard inputs, but does not allow running commands on the host.
+`SHELL_ACTION` is used to run a shell command. This is mostly for complex scripts or any action that isn't supported as a key type in libevdev. As always, audit your commands before they run.
+
+The key action is either the numberic key code, or a string to execute a shell command. Repeat on hold can also be toggled.
 
 # Custom pads
 If you are creating your own pad, there are a few requirements for it to work:
 - It must communicate over serial
 - It must communicate in 2 digit chunks (Ex: "71, 70") with the first digit being the numbered key (0-9) and the second the press state (0/1).
-- It must have less than 10 unique keys
+- It must have 10 or less unique keys
 
 You also will likely need to modify the Arduino sketch for your board, pins, and keymap.
 

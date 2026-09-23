@@ -22,7 +22,6 @@
           packages = with pkgs; [
             nim nimlsp nimble
             nim_lk jq
-
             arduino-cli
           ];
           shellHook = ''
@@ -30,11 +29,12 @@
             nim_lk | jq --sort-keys > lock.json
             echo "Installing nimble packages..."
             nimble -l --nimbleDir:.nimble install -d > /dev/null
+            export PATH=$PATH:$PWD/.nimble
             alias arduino-cli="arduino-cli --config-file ./arduino-cli.yaml"
             alias editor="lite-xl $PWD &"
             alias mk="make"
             alias nr="nix run"
-            alias nimpad='nix run .#default --'
+            alias nimpad="nix run .#default -- -l=d -p=/dev/serial/by-id/usb-Arduino_LLC_Arduino_Micro_HIDLD-if00"
           '';
         };
       };

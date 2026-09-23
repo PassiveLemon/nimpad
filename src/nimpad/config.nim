@@ -15,28 +15,51 @@ import
 type
   Config* = object
     port*: string
-  GlobalConfig* = object
-    config*: Config
-    nimpad*: NimpadKeySeq
+    nimpad*: NimpadKeyTable
 
 
 const
   configJson: string = """
-[
-  [ "KEY_ACTION", "VOLUMEDOWN" ],
-  [ "KEY_ACTION", "VOLUMEUP" ],
-  [ "KEY_ACTION", "VOLUMEMUTE" ],
-  [ "KEY_ACTION", "SCROLLLOCK" ],
-  [ "KEY_ACTION", "PREVIOUSSONG" ],
-  [ "KEY_ACTION", "NEXTSONG" ],
-  [ "KEY_ACTION", "PLAYPAUSE" ],
-  [ "KEY_ACTION", "" ],
-  [ "KEY_ACTION", "" ],
-  [ "KEY_ACTION", "" ]
-]
+{
+  "0": { // Vol down
+    "keyType": "KEY_ACTION",
+    "keyAction": "114",
+    "keyRepeat": true,
+  },
+  "1": { // Vol up
+    "keyType": "KEY_ACTION",
+    "keyAction": "115",
+    "keyRepeat": true,
+  },
+  "2": { // Sys mute
+    "keyType": "KEY_ACTION",
+    "keyAction": "113",
+    "keyRepeat": false,
+  },
+  "3": { // Scrolllock
+    "keyType": "KEY_ACTION",
+    "keyAction": "70",
+    "keyRepeat": false,
+  },
+  "4": { // Prev song
+    "keyType": "KEY_ACTION",
+    "keyAction": "165",
+    "keyRepeat": false,
+  },
+  "5": { // Next song
+    "keyType": "KEY_ACTION",
+    "keyAction": "163",
+    "keyRepeat": false,
+  },
+  "6": { // Play/pause
+    "keyType": "KEY_ACTION",
+    "keyAction": "164",
+    "keyRepeat": false,
+  },
+}
 """
 
-var globalConfig*: GlobalConfig
+var globalConfig*: Config
 
 
 proc getRealUserConfigDir(): string =
@@ -64,24 +87,17 @@ proc createConfig(filePath: string): void =
 
 proc parseConfig(filePath: string, cliArgs: CliArgs): Config =
   try:
-    let nimpadConfig = parseFile(filePath)
     var
-      node: JsonNode = %*{}
+      node: JsonNode = parseFile(filePath)
       json: Config
 
-    for v in nimpadConfig.items:
-      let
-        actionType = parseEnum[NimpadKeyActionType](v[0].getStr())
-        action = v[1].getStr()
-      globalConfig.nimpad.add((actionType, action))
-
+    json.nimpad = to(node, NimpadKeyTable)
+      
     if cliArgs.port == "":
       debug("Argument MODE not provided. Defaulting to /dev/ttyACM0...")
-      node["port"] = %"/dev/ttyACM0"
+      json.port = "/dev/ttyACM0"
     else:
-      node["port"] = %cliArgs.port
-
-    json = to(node, Config)
+      json.port = cliArgs.port
     return json
   except JsonParsingError:
     fatal("Config file is not valid json.")
@@ -96,5 +112,5 @@ proc initConfig*(): void =
     configDir = cliArgs.file
 
   createConfig(configDir)
-  globalConfig.config = parseConfig(configDir, cliArgs)
+  globalConfig = parseConfig(configDir, cliArgs)
 
