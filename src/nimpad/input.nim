@@ -49,7 +49,6 @@ proc createDevice(): ptr libevdev_uinput =
 proc initDevice*(): void =
   try:
     nimpadEvDevice = createDevice()
-    return
   except: # Figure out errors
     fatal("Could not initialize evdev device")
 
@@ -74,33 +73,39 @@ proc inputCleanup*() {.noconv.} =
   try:
     libevdev_uinput_destroy(nimpadEvDevice)
     close(nimpadStream)
-    return
   finally:
     quit(0)
 
 proc sendKey(key: int, state: int): void =
   try:
     libevdev_uinput_write_event(nimpadEvDevice, EV_KEY, key, state)
-    sleep(10) # Buffer time so listeners can see events more consistently
     libevdev_uinput_write_event(nimpadEvDevice, EV_SYN, SYN_REPORT, 0)
-    sleep(10)
+    sleep(5) # Buffer time so listeners can see events more consistently
   except: # Figure out errors
     error(fmt"Could not write key event: {key}. state: {state}")
 
-proc manageKey(key: int, state: int, repeat: bool): void =
+proc manageKey(action: string, state: int, repeat: bool): void =
+  let key = parseInt(action)
   if repeat:
     sendKey(key, state)
   elif state == 1:
     sendKey(key, 1)
     sendKey(key, 0)
-  return
 
-proc runShellCmd(action: string): void =
+proc runShellCmd(action: string, state: int): void =
   try:
-    discard startProcess(action, options = { poDaemon, poUsePath })
-    return
+    if state == 1:
+      discard startProcess(action, options = { poDaemon, poUsePath })
   except: # Figure out errors
     error(fmt"Could not start process '{action}' ")
+
+proc runKeySequence(action: string, state: int): void =
+  if state == 1:
+    let keySeq = action.split(" ")
+    for key in keySeq:
+      let keyCode = parseInt(key)
+      sendKey(keyCode, 1)
+      sendKey(keyCode, 0)
 
 proc actionHandler(input: string): void =
   try:
@@ -114,13 +119,14 @@ proc actionHandler(input: string): void =
 
     case keyActionType:
       of KEY_ACTION:
-        info(fmt"{keyAction} {pressedKeyState}")
-        manageKey(parseInt(keyAction), pressedKeyState, keyRepeat)
-        return
+        info(fmt"Inputting key '{keyAction}' '{pressedKeyState}'")
+        manageKey(keyAction, pressedKeyState, keyRepeat)
       of SHELL_ACTION:
         info(fmt"Executing '{keyAction}'")
-        runShellCmd(keyAction)
-        return
+        runShellCmd(keyAction, pressedKeyState)
+      of MACRO_ACTION:
+        info(fmt"Inputting key sequence '{keyAction}'")
+        runKeySequence(keyAction, pressedKeyState)
   except:
     warn(fmt"Unknown actionHandler input '{input}'. Ignoring...")
 
@@ -129,7 +135,6 @@ proc keyHandler*(input: string): void =
   try:
     discard parseInt(input)
     actionHandler(input)
-    return
   except:
     warn(fmt"Unknown KeyHandler input '{input}'. Ignoring...")
 

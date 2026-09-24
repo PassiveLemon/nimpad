@@ -70,11 +70,18 @@ By default, it will create the config file like so:
 }
 ```
 
-There are two key types, `KEY_ACTION` and `SHELL_ACTION`:
+There are two key types, `KEY_ACTION`, `SHELL_ACTION`, and `MACRO_ACTION`:
 
 `KEY_ACTION` is used to simulate a key input. Find the key code to use from [libevdev](https://github.com/PassiveLemon/libevdev-nim/blob/4d9b3581df1b95ffc400ae965958039e0687f1d0/libevdev/linux/input.nim#L158).
 
-`SHELL_ACTION` is used to run a shell command. This is mostly for complex scripts or any action that isn't supported as a key type in libevdev. As always, audit your commands before they run.
+`SHELL_ACTION` is used to run a shell command. This is mostly for complex scripts or any action that isn't supported as a key type in libevdev. As always, audit your commands before they run. Ex:
+```
+"1": {
+  "keyType": "SHELL_ACTION",
+  "keyAction": "playerctl play-pause",
+  "keyRepeat": false,
+},
+```
 
 The key action is either the numberic key code, or a string to execute a shell command. Repeat on hold can also be toggled.
 
