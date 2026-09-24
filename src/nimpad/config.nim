@@ -21,37 +21,37 @@ type
 const
   configJson: string = """
 {
-  "0": { // Vol down
+  "0": {
     "keyType": "KEY_ACTION",
     "keyAction": "114",
     "keyRepeat": true,
   },
-  "1": { // Vol up
+  "1": {
     "keyType": "KEY_ACTION",
     "keyAction": "115",
     "keyRepeat": true,
   },
-  "2": { // Sys mute
+  "2": {
     "keyType": "KEY_ACTION",
     "keyAction": "113",
     "keyRepeat": false,
   },
-  "3": { // Scrolllock
+  "3": {
     "keyType": "KEY_ACTION",
     "keyAction": "70",
     "keyRepeat": false,
   },
-  "4": { // Prev song
+  "4": {
     "keyType": "KEY_ACTION",
     "keyAction": "165",
     "keyRepeat": false,
   },
-  "5": { // Next song
+  "5": {
     "keyType": "KEY_ACTION",
     "keyAction": "163",
     "keyRepeat": false,
   },
-  "6": { // Play/pause
+  "6": {
     "keyType": "KEY_ACTION",
     "keyAction": "164",
     "keyRepeat": false,

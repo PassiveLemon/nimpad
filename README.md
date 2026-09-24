@@ -70,9 +70,16 @@ By default, it will create the config file like so:
 }
 ```
 
-There are two key types, `KEY_ACTION`, `SHELL_ACTION`, and `MACRO_ACTION`:
+Each key has an identifier and a some attributes. In the default, they are just numbers but they can be any unique character. The `keyType` attribute sets how Nimpad reads the `keyAction` attribute, which is what the key actually does. `keyRepeat` just toggles repeat on hold. There are three kinds of key actions:
 
-`KEY_ACTION` is used to simulate a key input. Find the key code to use from [libevdev](https://github.com/PassiveLemon/libevdev-nim/blob/4d9b3581df1b95ffc400ae965958039e0687f1d0/libevdev/linux/input.nim#L158).
+`KEY_ACTION` is used to simulate a key input. Its action is a key code to emulate (Must be a string). Find the key code to use from [libevdev](https://github.com/PassiveLemon/libevdev-nim/blob/4d9b3581df1b95ffc400ae965958039e0687f1d0/libevdev/linux/input.nim#L158).
+```
+"1": {
+  "keyType": "KEY_ACTION",
+  "keyAction": "164",
+  "keyRepeat": false,
+},
+```
 
 `SHELL_ACTION` is used to run a shell command. This is mostly for complex scripts or any action that isn't supported as a key type in libevdev. As always, audit your commands before they run. Ex:
 ```
@@ -83,13 +90,19 @@ There are two key types, `KEY_ACTION`, `SHELL_ACTION`, and `MACRO_ACTION`:
 },
 ```
 
-The key action is either the numberic key code, or a string to execute a shell command. Repeat on hold can also be toggled.
+`MACRO_ACTION` is used to run a sequence of keys. Its action should be a string with space separated key codes. Ex:
+```
+"1": {
+  "keyType": "MACRO_ACTION",
+  "keyAction": "50 30 46 19 24",
+  "keyRepeat": false,
+},
+```
 
 # Custom pads
 If you are creating your own pad, there are a few requirements for it to work:
 - It must communicate over serial
-- It must communicate in 2 digit chunks (Ex: "71, 70") with the first digit being the numbered key (0-9) and the second the press state (0/1).
-- It must have 10 or less unique keys
+- It must communicate in 2 character chunks (Ex: "71, 70") with the first char being any unique char and the second the press state (int 0/1).
 
 You also will likely need to modify the Arduino sketch for your board, pins, and keymap.
 

@@ -107,7 +107,8 @@ proc runKeySequence(action: string, state: int): void =
       sendKey(keyCode, 1)
       sendKey(keyCode, 0)
 
-proc actionHandler(input: string): void =
+proc keyHandler*(input: string): void =
+  debug(fmt"Received input: '{input}'")
   try:
     let
       nimpadKeys = globalConfig.nimpad
@@ -129,12 +130,4 @@ proc actionHandler(input: string): void =
         runKeySequence(keyAction, pressedKeyState)
   except:
     warn(fmt"Unknown actionHandler input '{input}'. Ignoring...")
-
-proc keyHandler*(input: string): void =
-  debug(fmt"Received input: '{input}'")
-  try:
-    discard parseInt(input)
-    actionHandler(input)
-  except:
-    warn(fmt"Unknown KeyHandler input '{input}'. Ignoring...")
 
