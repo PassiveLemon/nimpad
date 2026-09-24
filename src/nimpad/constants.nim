@@ -12,5 +12,5 @@ type
   NimpadKeyTable* = OrderedTable[string, NimpadKey]
 
 const
-  RELEASE_VERSION*: string = "0.4.0"
+  RELEASE_VERSION*: string = "0.5.0"
 
