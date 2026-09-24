@@ -95,7 +95,7 @@ proc manageKey(action: string, state: int, repeat: bool): void =
 proc runShellCmd(action: string, state: int): void =
   try:
     if state == 1:
-      discard startProcess(action, options = { poDaemon, poUsePath })
+      discard startProcess(action, options = { poDaemon, poUsePath, poEvalCommand })
   except: # Figure out errors
     error(fmt"Could not start process '{action}' ")
 
